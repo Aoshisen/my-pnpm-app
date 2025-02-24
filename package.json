@@ -5,7 +5,11 @@
   "type": "module",
   "scripts": {
     "dev:admin": "pnpm --filter @my-pnpm-app/admin dev",
-    "dev:shared": "pnpm --filter @my-pnpm-app/shared dev"
+    "dev:shared": "pnpm --filter @my-pnpm-app/shared dev",
+    "build:admin": "pnpm --filter @my-pnpm-app/admin build",
+    "build:shared": "pnpm --filter @my-pnpm-app/shared build",
+    "dev:plugin": "pnpm --filter @my-pnpm-app/plugin dev",
+    "start": "pnpm dev:admin && pnpm dev:plugin"
   },
   "dependencies": {
     "react": "^19.0.0",
@@ -22,6 +26,7 @@
     "globals": "^15.14.0",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.22.0",
-    "vite": "^6.1.0"
+    "vite": "^6.1.0",
+    "vite-css-modules": "^1.8.4"
   }
 }

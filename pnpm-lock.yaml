@@ -48,8 +48,42 @@ importers:
       vite:
         specifier: ^6.1.0
         version: 6.1.1(jiti@2.4.2)(sass-embedded@1.85.0)(sass@1.85.0)
+      vite-css-modules:
+        specifier: ^1.8.4
+        version: 1.8.4(postcss@8.5.3)(rollup@4.34.8)(vite@6.1.1(jiti@2.4.2)(sass-embedded@1.85.0)(sass@1.85.0))
 
   packages/admin:
+    dependencies:
+      '@my-pnpm-app/shared':
+        specifier: workspace:*
+        version: link:../shared
+      '@tanstack/react-query':
+        specifier: ^5.66.9
+        version: 5.66.9(react@19.0.0)
+      '@tanstack/react-query-devtools':
+        specifier: ^5.66.9
+        version: 5.66.9(@tanstack/react-query@5.66.9(react@19.0.0))(react@19.0.0)
+      '@unocss/reset':
+        specifier: ^66.0.0
+        version: 66.0.0
+      sass:
+        specifier: ^1.85.0
+        version: 1.85.0
+      vite-css-modules:
+        specifier: ^1.8.4
+        version: 1.8.4(postcss@8.5.3)(rollup@4.34.8)(vite@6.1.1(jiti@2.4.2)(sass-embedded@1.85.0)(sass@1.85.0))
+      zustand:
+        specifier: ^5.0.3
+        version: 5.0.3(@types/react@19.0.10)(react@19.0.0)
+    devDependencies:
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.66.1
+        version: 5.66.1(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.3)
+      unocss:
+        specifier: ^66.0.0
+        version: 66.0.0(postcss@8.5.3)(vite@6.1.1(jiti@2.4.2)(sass-embedded@1.85.0)(sass@1.85.0))(vue@3.5.13(typescript@5.7.3))
+
+  packages/plugin:
     dependencies:
       '@my-pnpm-app/shared':
         specifier: workspace:*
