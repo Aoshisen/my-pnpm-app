@@ -1,6 +1,5 @@
 import React, { FC, useMemo, useState, useCallback, useRef } from "react";
 import { useBoolean, useEventListener, useMount } from "ahooks";
-import useBox from "../../hooks/useBox";
 
 type SlideProps = {
 	value: number;
@@ -16,7 +15,6 @@ const Slide: FC<SlideProps> = ({
 	height = "8px",
 }) => {
 	const slideRef = useRef<HTMLDivElement>(null)
-	const rect = useBox(slideRef.current)
 	const [isDragging, { setTrue: startDragging, setFalse: stopDragging }] =
 		useBoolean(false);
 	const [currentValue, setCurrentValue] = useState(value);
@@ -27,12 +25,13 @@ const Slide: FC<SlideProps> = ({
 
 	const updateProgress = useCallback(
 		(event: MouseEvent) => {
-			if (!rect) return;
-			const x = Math.max(0, Math.min(event.clientX - rect.left, rect.width));
-			const newValue = Math.round((x / rect.width) * max);
+			if (!slideRef.current) return;
+			const { left, width } = slideRef.current.getBoundingClientRect()
+			const x = Math.max(0, Math.min(event.clientX - left, width));
+			const newValue = Math.round((x / width) * max);
 			setCurrentValue(newValue);
 		},
-		[rect, max]
+		[max]
 	);
 
 	const handleMouseMove = useCallback(
