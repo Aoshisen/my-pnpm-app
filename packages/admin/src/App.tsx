@@ -1,4 +1,5 @@
 import Layout from "./components/Layout";
+import Slide from "./components/Slide";
 
 function App() {
   return (
@@ -9,6 +10,7 @@ function App() {
       header={<div>this is header</div>}
     >
       <iframe src="http://localhost:3000/"></iframe>
+      <Slide value={20}></Slide>
     </Layout>
   )
 }
