@@ -1,5 +1,5 @@
 import React, { FC, useMemo, useState, useCallback, useRef } from "react";
-import { useBoolean, useEventListener, useMount } from "ahooks";
+import { useBoolean, useEventListener } from "ahooks";
 
 type SlideProps = {
 	value: number;
@@ -36,9 +36,10 @@ const Slide: FC<SlideProps> = ({
 
 	const handleMouseMove = useCallback(
 		(event: MouseEvent) => {
-			if (isDragging) {
-				updateProgress(event);
+			if (!isDragging) {
+				return;
 			}
+			updateProgress(event);
 		},
 		[isDragging, updateProgress]
 	);
@@ -54,14 +55,6 @@ const Slide: FC<SlideProps> = ({
 		startDragging();
 		updateProgress(event.nativeEvent);
 	};
-	const [show, setShow] = useState(false)
-	useMount(() => {
-		setTimeout(() => { setShow(true) }, 2000)
-	})
-	if (!show) {
-		return <>1111</>
-	}
-
 
 	return (
 		<div
