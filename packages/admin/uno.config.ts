@@ -5,7 +5,7 @@ export default defineConfig({
 	rules: [],
 	content: {
 		filesystem: [
-			'**/*.{html,js,ts,jsx,tsx,vue,svelte,astro}',
+			'**/*.{ts,tsx}',
 		],
 	},
 })
