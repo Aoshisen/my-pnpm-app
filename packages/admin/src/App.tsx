@@ -4,16 +4,19 @@ import PhoneWrapper from "./components/PhoneWrapper";
 import PreviewWrapper from "./components/PreviewWrapper";
 
 function App() {
+  const mobile = false;
   return (
     <Layout
-      side={<div className="w-full h-full p-2 overflow-y-auto">
-        this is side
+      header={<div>
       </div>}
-      header={<div>this is header</div>}
+      side={<div className="w-full h-full p-2 overflow-y-auto">
+      </div>}
     >
       <PreviewWrapper>
-        <ComputerWrapper><iframe src="http://localhost:3000/" /></ComputerWrapper>
-        <PhoneWrapper><iframe src="http://localhost:3000/" /></PhoneWrapper>
+        {!mobile ?
+          <ComputerWrapper><iframe src="http://localhost:3000/" /></ComputerWrapper> :
+          <PhoneWrapper><iframe src="http://localhost:3000/" /></PhoneWrapper>
+        }
       </PreviewWrapper>
     </Layout>
   )
