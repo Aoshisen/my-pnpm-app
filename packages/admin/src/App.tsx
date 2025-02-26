@@ -1,5 +1,7 @@
+import ComputerWrapper from "./components/ComputerWrapper";
 import Layout from "./components/Layout";
-import Slide from "./components/Slide";
+import PhoneWrapper from "./components/PhoneWrapper";
+import PreviewWrapper from "./components/PreviewWrapper";
 
 function App() {
   return (
@@ -9,8 +11,10 @@ function App() {
       </div>}
       header={<div>this is header</div>}
     >
-      <iframe src="http://localhost:3000/"></iframe>
-      <Slide value={20}></Slide>
+      <PreviewWrapper>
+        <ComputerWrapper><iframe src="http://localhost:3000/" /></ComputerWrapper>
+        <PhoneWrapper><iframe src="http://localhost:3000/" /></PhoneWrapper>
+      </PreviewWrapper>
     </Layout>
   )
 }
