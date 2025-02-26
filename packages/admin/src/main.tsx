@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client'
 import '@unocss/reset/tailwind.css';
 import 'virtual:uno.css';
 import App from './App.tsx'
-import HelpWrapper from './components/HelpWrapper';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
@@ -14,11 +13,9 @@ const queryClient = new QueryClient()
 
 root.render(
   <StrictMode>
-    <HelpWrapper>
-      <QueryClientProvider client={queryClient}>
-        <ReactQueryDevtools />
-        <App />
-      </QueryClientProvider>
-    </HelpWrapper>
+    <QueryClientProvider client={queryClient}>
+      <ReactQueryDevtools />
+      <App />
+    </QueryClientProvider>
   </StrictMode>,
 );
