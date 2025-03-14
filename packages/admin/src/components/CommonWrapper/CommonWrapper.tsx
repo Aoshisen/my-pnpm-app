@@ -3,7 +3,11 @@ import computer from "../../assets/computer-wrapper.png";
 import phone from "../../assets/phone-wrapper.png";
 import useEnvironmentStore, { Environment } from "../../store/environment"; // 如果环境在 store，也可以 props 传入！
 
-const CommonWrapper: FC<PropsWithChildren<unknown>> = ({ children }) => {
+type CommonWrapperProps = {
+	ref?: React.RefObject<HTMLDivElement | null>;
+	scale?: number;
+};
+const CommonWrapper: FC<PropsWithChildren<CommonWrapperProps>> = ({ children, ref, scale = 1 }) => {
 	const { environment } = useEnvironmentStore();
 	const isPC = environment === Environment.PC;
 	const wrapperImage = isPC ? computer : phone;
@@ -16,7 +20,7 @@ const CommonWrapper: FC<PropsWithChildren<unknown>> = ({ children }) => {
 		: "absolute w-[192px] h-[414px] left-[36px] top-[10px] bg-white";
 
 	return (
-		<div className="relative">
+		<div className="relative" ref={ref} style={{ scale: scale }}>
 			<img
 				src={wrapperImage}
 				alt={isPC ? "mac_computer_img" : "mac_phone_wrapper"}

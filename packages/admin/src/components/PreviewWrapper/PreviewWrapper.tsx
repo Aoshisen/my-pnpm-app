@@ -1,7 +1,10 @@
 import { FC, PropsWithChildren } from "react"
+type PreviewWrapperProps = {
+	ref?: React.RefObject<HTMLDivElement | null>
+}
 
-const PreviewWrapper: FC<PropsWithChildren<unknown>> = ({ children }) => {
-	return <div className="flex flex-justify-center flex-items-center h-full">
+const PreviewWrapper: FC<PropsWithChildren<PreviewWrapperProps>> = ({ children, ref }) => {
+	return <div className="flex flex-justify-center flex-items-center h-full w-full" ref={ref}>
 		{children}
 	</div>
 }
