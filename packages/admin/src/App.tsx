@@ -1,10 +1,13 @@
 import { Routes, Route, RouteProps } from 'react-router';
 
-import { Home } from "./pages";
+import { Home, Test } from "./pages";
 
 const routes: RouteProps[] = [{
   path: "/",
   element: <Home />
+}, {
+  path: "/test",
+  element: <Test />
 }]
 
 const App = () => {
