@@ -1,16 +1,15 @@
-import ComputerWrapper from "./components/ComputerWrapper";
-import Layout from "./components/Layout";
-import PhoneWrapper from "./components/PhoneWrapper";
-import PreviewWrapper from "./components/PreviewWrapper";
+import ComputerWrapper from "./components/ComputerWrapper/ComputerWrapper";
+import { Header } from "./components";
+import Layout from "./components/Layout/Layout";
+import PhoneWrapper from "./components/PhoneWrapper/PhoneWrapper";
+import PreviewWrapper from "./components/PreviewWrapper/PreviewWrapper";
 
 function App() {
   const mobile = false;
   return (
     <Layout
-      header={<div>
-      </div>}
-      side={<div className="w-full h-full p-2 overflow-y-auto">
-      </div>}
+      header={<Header></Header>}
+      side={<>111</>}
     >
       <PreviewWrapper>
         {!mobile ?

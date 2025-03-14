@@ -1,6 +1,6 @@
 import { QueryFunction, useQuery } from "@tanstack/react-query";
 interface ReturnData {
-	[e: string]: any
+	[e: string]: unknown
 }
 export const useFetchData = () => {
 	const queryFn: QueryFunction<ReturnData> = async () => {

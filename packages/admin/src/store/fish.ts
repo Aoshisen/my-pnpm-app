@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 // 定义状态的类型
-interface FishState {
+type FishState = {
 	fishes: number;
 	addAFish: () => void;
 }
