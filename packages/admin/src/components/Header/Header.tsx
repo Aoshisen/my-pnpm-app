@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { Status } from "../../store/status";
-import { Environment } from "../../store/environment";
+import useEnvironmentStore, { Environment } from "../../store/environment";
+import classNames from "classnames";
 
 type ButtonStatus = {
 	loading: boolean,
@@ -9,20 +10,36 @@ type ButtonStatus = {
 	onClick: () => void,
 }
 
-type HeaderProps = {
+type HeaderProps = Partial<{
 	status: Status
-	environment: Environment,
 	cancel_button: ButtonStatus,
 	confirm_button: ButtonStatus,
-}
+}>
 
 const Left: FC<HeaderProps> = () => {
 	return <>centered</>
-
 }
 
 const Centered: FC<HeaderProps> = () => {
-	return <>Centered</>
+	const { pc, mobile, environment } = useEnvironmentStore()
+
+	const buttons = [Environment.MOBILE, Environment.PC].map(env => ({
+		text: env === Environment.MOBILE ? '手机' : '电脑',
+		onClick: env === Environment.MOBILE ? mobile : pc,
+		isActive: environment === env
+	}))
+
+	return <>
+		{buttons.map(({ text, onClick, isActive }) => (
+			<button
+				key={text}
+				onClick={onClick}
+				className={classNames('btn btn-primary btn-sm', { 'btn-active': isActive })}
+			>
+				{text}
+			</button>
+		))}
+	</>
 }
 
 const Buttons: FC<HeaderProps> = () => {
