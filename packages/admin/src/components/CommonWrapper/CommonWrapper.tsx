@@ -4,12 +4,10 @@ import phone from "../../assets/phone-wrapper.png";
 import useEnvironmentStore, { Environment } from "../../store/environment"; // 如果环境在 store，也可以 props 传入！
 
 const CommonWrapper: FC<PropsWithChildren<unknown>> = ({ children }) => {
-	const { environment } = useEnvironmentStore(); // 也可以通过 props 传进来
-
-	// 根据环境切换图片和样式
+	const { environment } = useEnvironmentStore();
 	const isPC = environment === Environment.PC;
-
 	const wrapperImage = isPC ? computer : phone;
+	const animateClass = "transition-all duration-300 ease-in-out";
 	const imageClass = isPC
 		? "w-[754px] h-[434px] max-w-[754px]"
 		: "w-[264px] h-[434px] max-w-[264px]";
@@ -22,9 +20,9 @@ const CommonWrapper: FC<PropsWithChildren<unknown>> = ({ children }) => {
 			<img
 				src={wrapperImage}
 				alt={isPC ? "mac_computer_img" : "mac_phone_wrapper"}
-				className={imageClass}
+				className={imageClass + " " + animateClass}
 			/>
-			<div className={contentClass}>{children}</div>
+			<div className={contentClass + " " + animateClass}>{children}</div>
 		</div>
 	);
 };
