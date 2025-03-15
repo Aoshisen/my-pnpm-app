@@ -29,24 +29,38 @@ const CounterRecord = Record<Counter>({
 
 const immutableCount = CounterRecord();
 
+type History = List<ReturnType<Record.Factory<Counter>>>
 const init = {
 	_count: immutableCount,
 	count: 0,
-	history: List([immutableCount]),
+	history: List([]) as History,
 	currentIndex: 0,
 }
 
-type BuildHistoryList = (values: Counter[]) => List<ReturnType<Record.Factory<Counter>>>;
+type BuildHistoryList = (values: Counter[]) => History;
 
 const buildHistoryList: BuildHistoryList = (values) => {
+	//NOTICE: 由于immutable的特性，这里需要使用reduce来进行累加，而不能使用forEach,forEach循环会丢失中间状态；
 	const result = values.reduce((result, item) => {
 		const newCount = CounterRecord({ value: item.value });
 		return result.push(newCount);
 	}, init.history);
+
 	return result
 }
 
 const creatorFactory = create<CounterStore>()
+
+const reviver = (key: string, value: unknown) => {
+	if (key === "_count") {
+		return value ? CounterRecord(value) : init._count;
+	}
+	if (key === "history") {
+		return Array.isArray(value) ? buildHistoryList(value) : init.history;
+	}
+	return value;
+}
+
 const useCounterStore = creatorFactory(
 	persist((set, get) => {
 		return {
@@ -67,7 +81,7 @@ const useCounterStore = creatorFactory(
 						_count: nextCount,
 						count: nextState,
 						history: nextHistory,
-						currentIndex: history.size
+						currentIndex: nextHistory.size - 1,
 					}
 				})
 			},
@@ -101,7 +115,7 @@ const useCounterStore = creatorFactory(
 			},
 			canRedo() {
 				const { currentIndex, history } = get()
-				return currentIndex < history.size - 1
+				return currentIndex < (history.size - 1)
 			},
 		}
 	}, {
@@ -112,20 +126,7 @@ const useCounterStore = creatorFactory(
 			count: state.count,
 			currentIndex: state.currentIndex,
 		}),
-		storage: createJSONStorage(() => localStorage, {
-			reviver(key, value) {
-				if (key === "_count") {
-					return CounterRecord(value ? value : { value: 0 });
-				}
-				if (key === "history") {
-					if (!Array.isArray(value)) {
-						return init.history;
-					}
-					return buildHistoryList(value);
-				}
-				return value;
-			},
-		})
+		storage: createJSONStorage(() => localStorage, { reviver })
 	})
 )
 
