@@ -42,7 +42,7 @@ const init = {
 const creatorFactory = create<CounterStore>()
 
 
-const buildHistoryList: BuildHistoryList = (values) => {
+export const buildHistoryList: BuildHistoryList = (values) => {
 	//NOTICE: 由于immutable的特性，这里需要使用reduce来进行累加，而不能使用forEach,forEach循环会丢失中间状态；
 	const result = values.reduce((result, item) => {
 		const newCount = CounterRecord({ value: item.value });
@@ -52,7 +52,7 @@ const buildHistoryList: BuildHistoryList = (values) => {
 	return result
 }
 
-const reviver = (key: string, value: unknown) => {
+export const reviver = (key: string, value: unknown) => {
 	if (key === "history") {
 		return Array.isArray(value) ? buildHistoryList(value) : emptyHistory;
 	}

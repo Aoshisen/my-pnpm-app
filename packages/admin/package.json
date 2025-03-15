@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "test": "vitest",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.66.1",
-    "unocss": "^66.0.0"
+    "unocss": "^66.0.0",
+    "vitest": "^3.0.8"
   }
 }
