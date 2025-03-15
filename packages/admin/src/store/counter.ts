@@ -9,7 +9,6 @@ type Counter = {
 }
 
 type CounterStore = {
-	_count: ReturnType<Record.Factory<Counter>>,
 	count: number,
 	history: List<ReturnType<Record.Factory<Counter>>>,
 	currentIndex: number,
@@ -23,40 +22,39 @@ type CounterStore = {
 	canRedo: () => boolean,
 }
 
+type History = List<ReturnType<Record.Factory<Counter>>>
+
+type BuildHistoryList = (values: Counter[]) => History;
+
 const CounterRecord = Record<Counter>({
 	value: 0
 })
 
-const immutableCount = CounterRecord();
+const initCount = CounterRecord();
+const emptyHistory = List([]) as History;
 
-type History = List<ReturnType<Record.Factory<Counter>>>
 const init = {
-	_count: immutableCount,
 	count: 0,
-	history: List([]) as History,
+	history: List([initCount]) as History,
 	currentIndex: 0,
 }
 
-type BuildHistoryList = (values: Counter[]) => History;
+const creatorFactory = create<CounterStore>()
+
 
 const buildHistoryList: BuildHistoryList = (values) => {
 	//NOTICE: 由于immutable的特性，这里需要使用reduce来进行累加，而不能使用forEach,forEach循环会丢失中间状态；
 	const result = values.reduce((result, item) => {
 		const newCount = CounterRecord({ value: item.value });
 		return result.push(newCount);
-	}, init.history);
+	}, emptyHistory);
 
 	return result
 }
 
-const creatorFactory = create<CounterStore>()
-
 const reviver = (key: string, value: unknown) => {
-	if (key === "_count") {
-		return value ? CounterRecord(value) : init._count;
-	}
 	if (key === "history") {
-		return Array.isArray(value) ? buildHistoryList(value) : init.history;
+		return Array.isArray(value) ? buildHistoryList(value) : emptyHistory;
 	}
 	return value;
 }
@@ -72,8 +70,8 @@ const useCounterStore = creatorFactory(
 				get().update(get().count - delta)
 			},
 			update(nextState: Count) {
-				set(({ _count, history, currentIndex }) => {
-					const nextCount = _count.set('value', nextState)
+				set(({ history, currentIndex }) => {
+					const nextCount = initCount.set('value', nextState)
 					const nextHistory = history
 						.slice(0, currentIndex + 1)
 						.push(nextCount)
@@ -94,7 +92,6 @@ const useCounterStore = creatorFactory(
 				const newIndex = currentIndex - 1
 				const previousState = history.get(newIndex)
 				set({
-					_count: previousState,
 					count: previousState!.get('value'),
 					currentIndex: newIndex
 				})
@@ -105,7 +102,6 @@ const useCounterStore = creatorFactory(
 				const newIndex = currentIndex + 1
 				const nextState = history.get(newIndex)
 				set({
-					_count: nextState,
 					count: nextState!.get('value'),
 					currentIndex: newIndex
 				})
@@ -121,7 +117,6 @@ const useCounterStore = creatorFactory(
 	}, {
 		name: "counter-store",
 		partialize: (state) => ({
-			_count: state._count.toJS(),
 			history: state.history.toJS(),
 			count: state.count,
 			currentIndex: state.currentIndex,
