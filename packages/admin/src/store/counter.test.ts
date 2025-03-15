@@ -3,19 +3,18 @@ import useCounterStore from './counter'
 
 describe('Counter Store', () => {
 	beforeEach(() => {
-		// 每个测试前重置状态
 		useCounterStore.getState().reset()
 	})
 
 	describe('基础计数操作', () => {
 		it('should increment counter', () => {
-			const { increment, count } = useCounterStore.getState()
+			const { increment } = useCounterStore.getState()
 			increment(1)
 			expect(useCounterStore.getState().count).toBe(1)
 		})
 
 		it('should decrement counter', () => {
-			const { decrement, count } = useCounterStore.getState()
+			const { decrement } = useCounterStore.getState()
 			decrement(1)
 			expect(useCounterStore.getState().count).toBe(-1)
 		})
@@ -81,7 +80,7 @@ describe('Counter Store', () => {
 
 	describe('复杂操作场景', () => {
 		it('should handle undo/redo after new changes', () => {
-			const { increment, undo, redo, update } = useCounterStore.getState()
+			const { increment, undo,  update } = useCounterStore.getState()
 			increment(1) // count: 1
 			increment(2) // count: 3
 			undo()      // count: 1
@@ -100,68 +99,4 @@ describe('Counter Store', () => {
 		})
 	})
 
-	describe.skip("持久化存储测试", () => {
-		beforeEach(() => {
-			localStorage.clear()
-			useCounterStore.getState().reset()
-		})
-
-		it("should persist and restore state correctly", () => {
-			const { increment, undo } = useCounterStore.getState()
-			increment(1) // count: 1
-			increment(2) // count: 3
-
-			// 获取当前状态快照
-			const beforeRefresh = {
-				count: useCounterStore.getState().count,
-				history: useCounterStore.getState().history.toJS(),
-				currentIndex: useCounterStore.getState().currentIndex
-			}
-
-			// 模拟页面刷新：重新创建 store 实例
-			const newStore = useCounterStore.getState()
-
-			// 验证恢复后的状态
-			expect(newStore.count).toBe(beforeRefresh.count)
-			expect(newStore.history.toJS()).toEqual(beforeRefresh.history)
-			expect(newStore.currentIndex).toBe(beforeRefresh.currentIndex)
-
-			// 验证历史记录功能是否正常
-			newStore.undo()
-			expect(newStore.count).toBe(1)
-			expect(newStore.canRedo()).toBe(true)
-		})
-
-		it("should handle empty localStorage", () => {
-			localStorage.clear()
-			const state = useCounterStore.getState()
-			expect(state.count).toBe(0)
-			expect(state.history.size).toBe(1)
-			expect(state.currentIndex).toBe(0)
-		})
-
-		it("should maintain history operations after refresh", () => {
-			const { increment, undo } = useCounterStore.getState()
-			increment(1)
-			increment(2)
-			increment(3)
-			undo()
-
-			// 模拟页面刷新
-			const newStore = useCounterStore.getState()
-
-			// 验证状态
-			expect(newStore.count).toBe(3)
-			expect(newStore.history.size).toBe(4) // 初始值 + 3次操作
-			expect(newStore.currentIndex).toBe(2)
-			expect(newStore.canUndo()).toBe(true)
-			expect(newStore.canRedo()).toBe(true)
-
-			// 验证操作是否正常
-			newStore.undo()
-			expect(newStore.count).toBe(3)
-			newStore.redo()
-			expect(newStore.count).toBe(6)
-		})
-	})
 })
