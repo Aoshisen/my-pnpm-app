@@ -1,18 +1,21 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
 import { Record, List } from 'immutable'
+import { createJSONStorage, persist } from 'zustand/middleware'
+
+type Count = number;
 
 type Counter = {
-	value: number,
+	value: Count,
 }
 
-interface CounterStore {
+type CounterStore = {
 	_count: ReturnType<Record.Factory<Counter>>,
 	count: number,
 	history: List<ReturnType<Record.Factory<Counter>>>,
 	currentIndex: number,
 	increment: (e?: number) => void,
 	decrement: (e?: number) => void,
+	update: (e: Count) => void,
 	reset: () => void,
 	undo: () => void,
 	redo: () => void,
@@ -24,89 +27,105 @@ const CounterRecord = Record<Counter>({
 	value: 0
 })
 
-const useCounterStore = create<CounterStore>()(
-	persist((set, get) => ({
-		_count: CounterRecord(),
-		count: 0,
-		history: List([CounterRecord()]),
-		currentIndex: 0,
+const immutableCount = CounterRecord();
 
-		increment(delta = 1) {
-			set((state) => {
-				const newCount = state._count.set('value', state._count.get("value") + delta)
-				const newHistory = state.history
-					.slice(0, state.currentIndex + 1)
-					.push(newCount)
-				return {
-					_count: newCount,
-					count: newCount.get('value'),
-					history: newHistory,
-					currentIndex: newHistory.size - 1
-				}
-			})
-		},
+const init = {
+	_count: immutableCount,
+	count: 0,
+	history: List([immutableCount]),
+	currentIndex: 0,
+}
 
-		decrement(delta = 1) {
-			set((state) => {
-				const newCount = state._count.set('value', state._count.get("value") - delta)
-				const newHistory = state.history
-					.slice(0, state.currentIndex + 1)
-					.push(newCount)
-				return {
-					_count: newCount,
-					count: newCount.get('value'),
-					history: newHistory,
-					currentIndex: newHistory.size - 1
-				}
-			})
-		},
+type BuildHistoryList = (values: Counter[]) => List<ReturnType<Record.Factory<Counter>>>;
 
-		reset() {
-			const initial = CounterRecord()
-			set((state) => ({
-				_count: initial,
-				count: initial.get('value'),
-				history: List([initial]),
-				currentIndex: 0
-			}))
-		},
+const buildHistoryList: BuildHistoryList = (values) => {
+	const result = values.reduce((result, item) => {
+		const newCount = CounterRecord({ value: item.value });
+		return result.push(newCount);
+	}, init.history);
+	return result
+}
 
-		undo() {
-			const { currentIndex, history } = get()
-			if (currentIndex > 0) {
+const creatorFactory = create<CounterStore>()
+const useCounterStore = creatorFactory(
+	persist((set, get) => {
+		return {
+			...init,
+			increment(delta = 1) {
+				get().update(get().count + delta)
+			},
+			decrement(delta = 1) {
+				get().update(get().count - delta)
+			},
+			update(nextState: Count) {
+				set(({ _count, history, currentIndex }) => {
+					const nextCount = _count.set('value', nextState)
+					const nextHistory = history
+						.slice(0, currentIndex + 1)
+						.push(nextCount)
+					return {
+						_count: nextCount,
+						count: nextState,
+						history: nextHistory,
+						currentIndex: history.size
+					}
+				})
+			},
+			reset() {
+				set(() => init)
+			},
+			undo() {
+				if (!get().canUndo()) return
+				const { currentIndex, history } = get()
 				const newIndex = currentIndex - 1
 				const previousState = history.get(newIndex)
 				set({
 					_count: previousState,
-					count: previousState?.get('value'),
+					count: previousState!.get('value'),
 					currentIndex: newIndex
 				})
-			}
-		},
-
-		redo() {
-			const { currentIndex, history } = get()
-			if (currentIndex < history.size - 1) {
+			},
+			redo() {
+				if (!get().canRedo()) return;
+				const { currentIndex, history } = get()
 				const newIndex = currentIndex + 1
 				const nextState = history.get(newIndex)
 				set({
 					_count: nextState,
-					count: nextState?.get('value'),
+					count: nextState!.get('value'),
 					currentIndex: newIndex
 				})
-			}
-		},
-
-		canUndo() {
-			return get().currentIndex > 0
-		},
-
-		canRedo() {
-			const { currentIndex, history } = get()
-			return currentIndex < history.size - 1
-		},
-	}), {
-		name: "counter-storage"
+			},
+			canUndo() {
+				return get().currentIndex > 0
+			},
+			canRedo() {
+				const { currentIndex, history } = get()
+				return currentIndex < history.size - 1
+			},
+		}
+	}, {
+		name: "counter-store",
+		partialize: (state) => ({
+			_count: state._count.toJS(),
+			history: state.history.toJS(),
+			count: state.count,
+			currentIndex: state.currentIndex,
+		}),
+		storage: createJSONStorage(() => localStorage, {
+			reviver(key, value) {
+				if (key === "_count") {
+					return CounterRecord(value ? value : { value: 0 });
+				}
+				if (key === "history") {
+					if (!Array.isArray(value)) {
+						return init.history;
+					}
+					return buildHistoryList(value);
+				}
+				return value;
+			},
+		})
 	})
 )
 
