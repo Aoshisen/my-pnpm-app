@@ -11,8 +11,26 @@ function* generatePoints(width: number, height: number, gap: number) {
 		}
 	}
 }
+
+function* generateBuffer(pointsBuffer: Float32Array<ArrayBufferLike>, size: number) {
+	for (let index = 0; index < pointsBuffer.length; index += size) {
+		yield { x: pointsBuffer[index], y: pointsBuffer[index + 1] }
+	}
+
+}
+
+function getForceOnPoint({ x, y }: Point, scale: number) {
+	const date = +new Date() / (scale * 10);
+	return perlin3(x / scale, y / scale, date) * Math.PI;
+}
+
+function getLengthOnPoint({ x, y }: Point, scale: number, length: number) {
+	return (perlin3(x / scale, y / scale, 1)) * length;
+}
+
+
 export class Sky {
-	private readonly GAP = 20;
+	private readonly GAP = 10;
 	private readonly RADIUS = 1.5;
 	private readonly SCALE = 250;
 	private readonly LENGTH = 10;
@@ -30,12 +48,12 @@ export class Sky {
 		this.startAnimate();
 	}
 
-	private getBufferSize() {
+	getBufferSize() {
 		const pointCount = Math.ceil(this.el.width / this.GAP) * Math.ceil(this.el.height / this.GAP);
 		return (pointCount * this.POINT_DATA_SIZE);
 	}
 
-	private initializePoints() {
+	initializePoints() {
 		let index = 0;
 		for (const point of generatePoints(this.el.width, this.el.height, this.GAP)) {
 			const bufferIndex = index * this.POINT_DATA_SIZE;
@@ -45,23 +63,14 @@ export class Sky {
 		}
 	}
 
-	private shouldUpdate() {
+	shouldUpdate() {
 		return performance.now() - this.timeStamp > (1000 / this.FPS)
 	}
 
-	getForceOnPoint({ x, y }: Point) {
-		const date = +new Date() / (this.SCALE * 10);
-		return perlin3(x / this.SCALE, y / this.SCALE, date) * Math.PI;
-	}
-
-	getLengthOnPoint({ x, y }: Point) {
-		return (perlin3(x / this.SCALE, y / this.SCALE, 1)) * this.LENGTH;
-	}
-
 	nextPoint(p: Point) {
-		const force = this.getForceOnPoint(p)
+		const force = getForceOnPoint(p, this.SCALE)
 		const opacity = Math.abs(Math.cos(force)) * 0.3 + 0.1
-		const length = this.getLengthOnPoint(p)
+		const length = getLengthOnPoint(p, this.SCALE, this.LENGTH)
 		const X = Math.cos(force) * length;
 		const Y = Math.sin(force) * length;
 		return {
@@ -77,16 +86,13 @@ export class Sky {
 		this.ctx.fillStyle = nextPoint.color;
 		this.ctx.arc(nextPoint.x, nextPoint.y, this.RADIUS, 0, Math.PI * 2);
 		this.ctx.fill();
+		this.ctx.closePath()
 	}
 
 	dot() {
 		this.ctx.clearRect(0, 0, this.el.width, this.el.height);
-		for (let index = 0; index < this.pointsBuffer.length; index += this.POINT_DATA_SIZE) {
-			this.drawDot({
-				x: this.pointsBuffer[index],
-				y: this.pointsBuffer[index + 1],
-			}
-			)
+		for (const point of generateBuffer(this.pointsBuffer, this.POINT_DATA_SIZE)) {
+			this.drawDot(point)
 		}
 	}
 	nextFrame() {
