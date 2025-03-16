@@ -6,7 +6,8 @@ import { useMount } from "ahooks";
 const Sky = () => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	useMount(() => {
-		new SkyClass(canvasRef.current!)
+		//@ts-expect-error global
+		window.sky = new SkyClass(canvasRef.current!)
 	})
 
 	return <div className="w-screen h-screen flex flex-items-center flex-justify-center">

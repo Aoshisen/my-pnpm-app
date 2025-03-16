@@ -4,7 +4,7 @@ import { useEventListener, useThrottleFn } from "ahooks";
 //@see https://observablehq.com/
 const woman = "https://images.ctfassets.net/uklh5xrq1p2j/abyW2Vm1ggRneFM6vKcNb/174435a3e294516046e64d7435fab32a/Kaitlyn_V3_600-_1_-copy.jpg";
 //@see https://github.com/settings/profile;
-const me= "https://avatars.githubusercontent.com/u/66982800?s…00&u=714f1dfd75792020c7e78e49889b87378760a0ea&v=4"
+// const me= "https://avatars.githubusercontent.com/u/66982800?s…00&u=714f1dfd75792020c7e78e49889b87378760a0ea&v=4"
 
 const Image = () => {
 	const containerEl = useRef<HTMLDivElement>(null);
@@ -12,6 +12,8 @@ const Image = () => {
 	const handleOnLoad: ReactEventHandler<Element> = ({ target }) => {
 		const image = new ImageClass(target as HTMLImageElement);
 		setImageInstance(image);
+		//@ts-expect-error global
+		window.image=image;
 		containerEl.current!.removeChild(target as HTMLImageElement)
 		containerEl.current!.append(image.canvas)
 	}

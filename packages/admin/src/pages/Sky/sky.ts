@@ -5,9 +5,11 @@ const perlin3 = noise.perlin3.bind(noise);
 type Point = { x: number, y: number }
 
 function* generatePoints(width: number, height: number, gap: number) {
+	let index = 0
 	for (let x = 0; x < width; x += gap) {
 		for (let y = 0; y < height; y += gap) {
-			yield { x, y };
+			yield { x, y, index };
+			index++;
 		}
 	}
 }
@@ -54,12 +56,10 @@ export class Sky {
 	}
 
 	initializePoints() {
-		let index = 0;
-		for (const point of generatePoints(this.el.width, this.el.height, this.GAP)) {
+		for (const { x, y, index } of generatePoints(this.el.width, this.el.height, this.GAP)) {
 			const bufferIndex = index * this.POINT_DATA_SIZE;
-			this.pointsBuffer[bufferIndex] = point.x;
-			this.pointsBuffer[bufferIndex + 1] = point.y;
-			index++;
+			this.pointsBuffer[bufferIndex] = x;
+			this.pointsBuffer[bufferIndex + 1] = y;
 		}
 	}
 
