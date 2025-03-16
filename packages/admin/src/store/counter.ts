@@ -63,48 +63,35 @@ const useCounterStore = creatorFactory(
 	persist((set, get) => {
 		return {
 			...init,
+			reset() {
+				set(init)
+			},
+			update(nextState: Count) {
+				set(({ history, currentIndex }) => {
+					const nextCount = initCount.set('value', nextState)
+					const nextHistory = history.slice(0, currentIndex + 1).push(nextCount)
+					return { count: nextState, history: nextHistory, currentIndex: history.size }
+				})
+			},
 			increment(delta = 1) {
 				get().update(get().count + delta)
 			},
 			decrement(delta = 1) {
 				get().update(get().count - delta)
 			},
-			update(nextState: Count) {
-				set(({ history, currentIndex }) => {
-					const nextCount = initCount.set('value', nextState)
-					const nextHistory = history
-						.slice(0, currentIndex + 1)
-						.push(nextCount)
-					return {
-						_count: nextCount,
-						count: nextState,
-						history: nextHistory,
-						currentIndex: nextHistory.size - 1,
-					}
-				})
-			},
-			reset() {
-				set(() => init)
-			},
 			undo() {
-				if (!get().canUndo()) return
-				const { currentIndex, history } = get()
+				const { currentIndex, history, canUndo } = get()
+				if (!canUndo()) return
 				const newIndex = currentIndex - 1
 				const previousState = history.get(newIndex)
-				set({
-					count: previousState!.get('value'),
-					currentIndex: newIndex
-				})
+				set({ count: previousState!.get('value'), currentIndex: newIndex })
 			},
 			redo() {
-				if (!get().canRedo()) return;
-				const { currentIndex, history } = get()
+				const { currentIndex, history, canRedo } = get()
+				if (!canRedo()) return;
 				const newIndex = currentIndex + 1
 				const nextState = history.get(newIndex)
-				set({
-					count: nextState!.get('value'),
-					currentIndex: newIndex
-				})
+				set({ count: nextState!.get('value'), currentIndex: newIndex })
 			},
 			canUndo() {
 				return get().currentIndex > 0

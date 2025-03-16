@@ -14,13 +14,18 @@ const Test = () => {
 	} = useCounterStore()
 
 	return (
-		<div>
-			<h2>当前值: {count}</h2>
-			<Button onClick={() => increment(1)}>+1</Button>
-			<Button onClick={() => decrement(1)}>-1</Button>
-			<Button onClick={reset}>重置</Button>
-			<Button onClick={undo} disabled={!canUndo()}>撤销</Button>
-			<Button onClick={redo} disabled={!canRedo()}>重做</Button>
+		<div className="h-screen w-screen flex flex-items-center flex-justify-center">
+			<div>
+				<h1>当前值: {count}</h1>
+				<br />
+				<br />
+				<br />
+				<Button onClick={() => increment(1)}>+1</Button>
+				<Button onClick={() => decrement(1)}>-1</Button>
+				<Button onClick={reset}>重置</Button>
+				<Button onClick={undo} disabled={!canUndo()}>撤销</Button>
+				<Button onClick={redo} disabled={!canRedo()}>重做</Button>
+			</div>
 		</div>
 	)
 }

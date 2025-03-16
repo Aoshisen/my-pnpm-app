@@ -1,6 +1,6 @@
 import { Routes, Route, RouteProps } from 'react-router';
 
-import { Home, Test } from "./pages";
+import { Home, Test, Sky } from "./pages";
 
 const routes: RouteProps[] = [{
   path: "/",
@@ -8,6 +8,10 @@ const routes: RouteProps[] = [{
 }, {
   path: "/test",
   element: <Test />
+},
+{
+  path: "/sky",
+  element: <Sky />
 }]
 
 const App = () => {
