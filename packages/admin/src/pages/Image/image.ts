@@ -1,15 +1,15 @@
-type ColorBuffer = [number, number, number, number];
-type PointBuffer = {
-	x: number;
-	y: number;
-	r: number;
-	g: number;
-	b: number;
-	a: number;
-	radius: number;
-	offsetX: number;
-	offsetY: number;
-}
+type ColorBuffer = [r: number, g: number, b: number, a: number];
+type PointBuffer = [
+	x: number,
+	y: number,
+	r: number,
+	g: number,
+	b: number,
+	a: number,
+	radius: number,
+	offsetX: number,
+	offsetY: number,
+]
 
 function getGrayScaledRadius(color: ColorBuffer, GAP: number) {
 	const grayScale = gray(color) / 255;
@@ -28,25 +28,22 @@ function* generatePoints(width: number, height: number, gap: number) {
 	}
 }
 
-function* generateBuffer(pointsBuffer: Float32Array, size: number, max_range: number) {
+function* generateBuffer(pointsBuffer: unknown[], size: number, max_range: number) {
 	let count = 0
 	const shouldYield = () => count <= max_range;
 	for (let index = 0; index < pointsBuffer.length; index += size) {
 		if (shouldYield()) {
-			yield {
-				x: pointsBuffer[index],
-				y: pointsBuffer[index + 1],
-				r: pointsBuffer[index + 2],
-				g: pointsBuffer[index + 3],
-				b: pointsBuffer[index + 4],
-				a: pointsBuffer[index + 5],
-				radius: pointsBuffer[index + 6],
-				offsetX: pointsBuffer[index + 7],
-				offsetY: pointsBuffer[index + 8],
-			} as PointBuffer;
+			yield slice(pointsBuffer, index, size);
 			count++
 		}
 	}
+}
+function slice(data: unknown[], begin: number, size: number) {
+	const slice = new Float32Array(size);
+	for (let i = 0; i < size; i++) {
+		slice[i] = data[begin + i] as number;
+	}
+	return slice
 }
 
 export class Image {
@@ -77,12 +74,10 @@ export class Image {
 		const { width, height } = this.imageData;
 		let index = 0
 		for (const { x, y } of generatePoints(width, height, this.GAP)) {
-			const dataIndex = (y * width + x) * 4;
-			const r = this.imageData.data[dataIndex];
-			const g = this.imageData.data[dataIndex + 1];
-			const b = this.imageData.data[dataIndex + 2];
-			const a = this.imageData.data[dataIndex + 3];
-			const color = [r, g, b, a] as ColorBuffer;
+			const COLOR_DATA_SIZE = 4 //r,g,b,a
+			const dataIndex = (y * width + x) * COLOR_DATA_SIZE;
+			//@ts-expect-error 
+			const color = slice(this.imageData.data, dataIndex, COLOR_DATA_SIZE) as ColorBuffer;
 			if (this.isWhite(color)) {
 				continue;
 			}
@@ -112,8 +107,8 @@ export class Image {
 		return r === 255 && g === 255 && b === 255
 	}
 
-	drawPoint(point: PointBuffer, step: number) {
-		const { x, y, r, g, b, a, radius, offsetX, offsetY } = point;
+	drawPoint(point: Float32Array, step: number) {
+		const [x, y, r, g, b, a, radius, offsetX, offsetY] = point;
 		this.ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
 		this.ctx.beginPath();
 		this.ctx.arc(x + offsetX * step, y + offsetY * step, radius, 0, Math.PI * 2);
@@ -123,6 +118,7 @@ export class Image {
 
 	drawPoints(step = 0) {
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		//@ts-expect-error 
 		for (const point of generateBuffer(this.pointsBuffer, this.POINT_DATA_SIZE, this.pointsBufferLength)) {
 			this.drawPoint(point, step);
 		}
