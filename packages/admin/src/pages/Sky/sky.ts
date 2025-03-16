@@ -1,40 +1,59 @@
+//@ts-expect-error  外部依赖不符合esm 规范;
 import { Noise } from "noisejs"
 const noise = new Noise(Math.random());
 const perlin3 = noise.perlin3.bind(noise);
 type Point = { x: number, y: number }
+
+function* generatePoints(width: number, height: number, gap: number) {
+	for (let x = 0; x < width; x += gap) {
+		for (let y = 0; y < height; y += gap) {
+			yield { x, y };
+		}
+	}
+}
 export class Sky {
-	readonly GAP = 20;
-	readonly RADIUS = 1.5;
-	readonly SCALE = 250;
-	readonly LENGTH = 10;
-	ctx: CanvasRenderingContext2D;
-	dots: Map<string, Point> = new Map();
+	private readonly GAP = 20;
+	private readonly RADIUS = 1.5;
+	private readonly SCALE = 250;
+	private readonly LENGTH = 10;
 	private pointsBuffer: Float32Array;
 	private readonly POINT_DATA_SIZE = 2;
+	private readonly FPS = 10;
+	private timeStamp = performance.now();
+	ctx: CanvasRenderingContext2D;
+	dots: Map<string, Point> = new Map();
+
 	constructor(private el: HTMLCanvasElement) {
 		this.ctx = this.el.getContext("2d")!;
-		const pointCount = Math.ceil(this.el.width / this.GAP) * Math.ceil(this.el.height / this.GAP);
-		this.pointsBuffer = new Float32Array(pointCount * this.POINT_DATA_SIZE);
+		this.pointsBuffer = new Float32Array(this.getBufferSize());
 		this.initializePoints();
 		this.startAnimate();
 	}
 
+	private getBufferSize() {
+		const pointCount = Math.ceil(this.el.width / this.GAP) * Math.ceil(this.el.height / this.GAP);
+		return (pointCount * this.POINT_DATA_SIZE);
+	}
+
 	private initializePoints() {
 		let index = 0;
-		for (let x = 4; x < this.el.width; x += this.GAP) {
-			for (let y = 4; y < this.el.height; y += this.GAP) {
-				const bufferIndex = index * this.POINT_DATA_SIZE;
-				this.pointsBuffer[bufferIndex] = x;
-				this.pointsBuffer[bufferIndex + 1] = y;
-				index++;
-			}
+		for (const point of generatePoints(this.el.width, this.el.height, this.GAP)) {
+			const bufferIndex = index * this.POINT_DATA_SIZE;
+			this.pointsBuffer[bufferIndex] = point.x;
+			this.pointsBuffer[bufferIndex + 1] = point.y;
+			index++;
 		}
 	}
+
+	private shouldUpdate() {
+		return performance.now() - this.timeStamp > (1000 / this.FPS)
+	}
+
 	getForceOnPoint({ x, y }: Point) {
-		//-180 度 180度
 		const date = +new Date() / (this.SCALE * 10);
 		return perlin3(x / this.SCALE, y / this.SCALE, date) * Math.PI;
 	}
+
 	getLengthOnPoint({ x, y }: Point) {
 		return (perlin3(x / this.SCALE, y / this.SCALE, 1)) * this.LENGTH;
 	}
@@ -70,9 +89,15 @@ export class Sky {
 			)
 		}
 	}
+	nextFrame() {
+		requestAnimationFrame(() => this.startAnimate());
+	}
 
 	startAnimate() {
-		this.dot();
-		requestAnimationFrame(() => this.startAnimate());
+		if (this.shouldUpdate()) {
+			this.dot();
+			this.timeStamp = performance.now()
+		}
+		this.nextFrame()
 	}
 }
