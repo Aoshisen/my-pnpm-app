@@ -30,7 +30,7 @@ function getLengthOnPoint({ x, y }: Point, scale: number, length: number) {
 
 
 export class Sky {
-	private readonly GAP = 10;
+	private readonly GAP = 20;
 	private readonly RADIUS = 1.5;
 	private readonly SCALE = 250;
 	private readonly LENGTH = 10;

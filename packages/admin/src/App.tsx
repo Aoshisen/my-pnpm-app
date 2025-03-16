@@ -1,6 +1,6 @@
 import { Routes, Route, RouteProps } from 'react-router';
 
-import { Home, Test, Sky } from "./pages";
+import { Home, Test, Sky, Image } from "./pages";
 
 const routes: RouteProps[] = [{
   path: "/",
@@ -12,7 +12,13 @@ const routes: RouteProps[] = [{
 {
   path: "/sky",
   element: <Sky />
-}]
+},
+
+{
+  path: "/image",
+  element: <Image />
+}
+]
 
 const App = () => {
   return <Routes>
