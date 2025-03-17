@@ -1,0 +1,1 @@
+export { default as LinearBg } from "./LinearBg"
