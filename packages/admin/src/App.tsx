@@ -1,13 +1,14 @@
 import { Routes, Route } from 'react-router';
 import routes from "./constant/routes"
+import { Home } from './pages/Home';
 const App = () => {
   return (
     <Routes>
-      {
-        routes.map((route) => {
-          return <Route {...route} />
-        })
-      }
+      <Route path="/" Component={Home} />
+      {routes.map((route, index) => (
+        <Route {...route} key={index} />
+      ))}
+
     </Routes>
   );
 };

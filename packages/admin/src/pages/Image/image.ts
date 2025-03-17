@@ -1,15 +1,15 @@
 type ColorBuffer = [r: number, g: number, b: number, a: number];
-type PointBuffer = [
-	x: number,
-	y: number,
-	r: number,
-	g: number,
-	b: number,
-	a: number,
-	radius: number,
-	offsetX: number,
-	offsetY: number,
-]
+// type PointBuffer = [
+// 	x: number,
+// 	y: number,
+// 	r: number,
+// 	g: number,
+// 	b: number,
+// 	a: number,
+// 	radius: number,
+// 	offsetX: number,
+// 	offsetY: number,
+// ]
 
 function getGrayScaledRadius(color: ColorBuffer, GAP: number) {
 	const grayScale = gray(color) / 255;
@@ -17,7 +17,7 @@ function getGrayScaledRadius(color: ColorBuffer, GAP: number) {
 	return radius;
 }
 
-function gray([r, g, b, _]: ColorBuffer) {
+function gray([r, g, b]: ColorBuffer) {
 	return 0.299 * r + 0.587 * g + 0.114 * b
 }
 function* generatePoints(width: number, height: number, gap: number) {
@@ -76,7 +76,7 @@ export class Image {
 		for (const { x, y } of generatePoints(width, height, this.GAP)) {
 			const COLOR_DATA_SIZE = 4 //r,g,b,a
 			const dataIndex = (y * width + x) * COLOR_DATA_SIZE;
-			//@ts-expect-error 
+			//@ts-expect-error  ColorBuffer
 			const color = slice(this.imageData.data, dataIndex, COLOR_DATA_SIZE) as ColorBuffer;
 			if (this.isWhite(color)) {
 				continue;
@@ -103,7 +103,7 @@ export class Image {
 		this.ctx.clearRect(0, 0, canvas.width, canvas.height)
 		return data;
 	}
-	isWhite([r, g, b, _]: ColorBuffer) {
+	isWhite([r, g, b]: ColorBuffer) {
 		return r === 255 && g === 255 && b === 255
 	}
 
@@ -118,7 +118,7 @@ export class Image {
 
 	drawPoints(step = 0) {
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		//@ts-expect-error 
+		//@ts-expect-error  pointerBuffer
 		for (const point of generateBuffer(this.pointsBuffer, this.POINT_DATA_SIZE, this.pointsBufferLength)) {
 			this.drawPoint(point, step);
 		}

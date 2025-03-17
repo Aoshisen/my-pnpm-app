@@ -1,30 +1,31 @@
-import { useRef } from "react";
-import { CommonWrapper, Header, Iframe, PreviewWrapper, Layout } from "../../components";
-import { useScale } from "../../hooks/useScale";
+import { CSSProperties } from "react";
+import routes from "../../constant/routes";
+import { Button } from "../../components";
+import { Link } from "react-router";
 
-function App() {
-	const parentRef = useRef<HTMLDivElement>(null);
-	const childrenRef = useRef<HTMLDivElement>(null);
-
-	const scale = useScale({
-		containerRef: parentRef,
-		contentRef: childrenRef,
-		horizontal: 40,
-		vertical: 40
-	});
-
+function Home() {
 	return (
-		<Layout
-			header={<Header />}
-			side={<>111</>}
-		>
-			<PreviewWrapper ref={parentRef}>
-				<CommonWrapper ref={childrenRef} scale={scale}>
-					<Iframe />
-				</CommonWrapper>
-			</PreviewWrapper>
-		</Layout>
+		<div className="h-3xl flex flex-items-center flex-justify-center">
+			<div className=" shadow-md shadow-gray-2 w-xl h-xl flex flex-items-center flex-justify-center p-4" >
+				<div
+					style={{
+						['--grid-min-col-size']: "150px"
+					} as CSSProperties}
+					className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,var(--grid-min-col-size,200px)),1fr))] gap-4 w-full"
+				>
+					{routes.map(route => {
+						return <Button>
+							<Link to={route.path!}>
+								{route.path?.slice(1)}
+							</Link>
+						</Button>
+
+					})}
+				</div>
+			</div>
+		</div >
 	);
 }
 
-export default App
+
+export default Home
