@@ -1,9 +1,13 @@
 import { CSSProperties } from "react";
 import routes from "../../constant/routes";
 import { Button } from "../../components";
-import { Link } from "react-router";
+import { useNavigate } from "react-router";
 
 function Home() {
+	const navigate = useNavigate()
+	const handleLinkClick = (path: string) => {
+		navigate(path)
+	}
 	return (
 		<div className="h-3xl flex flex-items-center flex-justify-center">
 			<div className=" shadow-md shadow-gray-2 w-xl h-xl flex flex-items-center flex-justify-center p-4" >
@@ -14,10 +18,9 @@ function Home() {
 					className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,var(--grid-min-col-size,200px)),1fr))] gap-4 w-full"
 				>
 					{routes.map(route => {
-						return <Button>
-							<Link to={route.path!}>
-								{route.path?.slice(1)}
-							</Link>
+						return <Button key={route.path}
+							onClick={() => handleLinkClick(route.path!)}>
+							{route.path?.slice(1)}
 						</Button>
 
 					})}
