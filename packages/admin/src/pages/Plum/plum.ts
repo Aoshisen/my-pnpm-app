@@ -11,9 +11,9 @@ enum Direction {
 
 class Branch extends Point {
 	length: number;
-	private readonly MIN_LENGTH: number = 4;
-	private readonly MAX_LENGTH: number = 10;
-	private readonly RANDOM_THETA = 0.2;
+	private readonly MIN_LENGTH: number = 2;
+	private readonly MAX_LENGTH: number = 6;
+	private readonly RANDOM_THETA = 0.22;
 	constructor(public start: Point, public theta: number) {
 		super(start.x, start.y)
 		this.length = this.randomLength()
@@ -57,6 +57,7 @@ class Branch extends Point {
 }
 
 function draw(branch: Branch, ctx: CanvasRenderingContext2D): void {
+	ctx.lineWidth = 0.1
 	ctx.beginPath();
 	ctx.moveTo(branch.x, branch.y);
 	ctx.lineTo(branch.endPoint.x, branch.endPoint.y);
@@ -67,7 +68,7 @@ export class Plum extends Point {
 	private ctx: CanvasRenderingContext2D;
 	private frameQueue: (() => void)[] = [];
 	private depth: number = 0;
-	private readonly MAX_DEPTH = 400;
+	private readonly MAX_DEPTH = 500;
 	private readonly MIN_DEPTH = 5;
 	public INIT_THETA = Math.PI / 2;
 	constructor(private el: HTMLCanvasElement, public x: number = 0, public y: number = 0) {
