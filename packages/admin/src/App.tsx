@@ -1,31 +1,15 @@
-import { Routes, Route, RouteProps } from 'react-router';
-
-import { Home, Test, Sky, Image } from "./pages";
-
-const routes: RouteProps[] = [{
-  path: "/",
-  element: <Home />
-}, {
-  path: "/test",
-  element: <Test />
-},
-{
-  path: "/sky",
-  element: <Sky />
-},
-
-{
-  path: "/image",
-  element: <Image />
-}
-]
-
+import { Routes, Route } from 'react-router';
+import routes from "./constant/routes"
 const App = () => {
-  return <Routes>
-    {
-      routes.map(route => <Route {...route} key={route.path} />)
-    }
-  </Routes>
-}
+  return (
+    <Routes>
+      {
+        routes.map((route) => {
+          return <Route {...route} />
+        })
+      }
+    </Routes>
+  );
+};
 
 export default App;

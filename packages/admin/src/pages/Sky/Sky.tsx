@@ -11,8 +11,8 @@ const Sky = () => {
 	})
 
 	return <div className="w-screen h-screen flex flex-items-center flex-justify-center">
-		<div className="w-3xl h-3xl b-black b-1px b-solid overflow-hidden shadow-2xl shadow-gray">
-			<canvas ref={canvasRef} width={768} height={768} className="bg-stone-950" />
+		<div className="w-2xl h-2xl  overflow-hidden shadow-xl shadow-gray-2">
+			<canvas ref={canvasRef} width={672} height={672} />
 		</div>
 	</div>
 }

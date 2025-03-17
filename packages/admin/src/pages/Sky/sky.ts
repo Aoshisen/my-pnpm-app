@@ -38,7 +38,7 @@ export class Sky {
 	private readonly LENGTH = 10;
 	private pointsBuffer: Float32Array;
 	private readonly POINT_DATA_SIZE = 2;
-	private readonly FPS = 10;
+	private readonly FPS = 30;
 	private timeStamp = performance.now();
 	ctx: CanvasRenderingContext2D;
 	dots: Map<string, Point> = new Map();

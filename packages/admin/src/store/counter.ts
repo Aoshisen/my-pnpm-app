@@ -103,10 +103,11 @@ const useCounterStore = creatorFactory(
 		}
 	}, {
 		name: "counter-store",
-		partialize: (state) => ({
-			history: state.history.toJS(),
-			count: state.count,
-			currentIndex: state.currentIndex,
+		partialize: ({ history, count, currentIndex }) => ({
+			count,
+			currentIndex,
+			//NOTICE: history 是immutable List 对象需要通过此方法转化数据类型
+			history: history.toJS(),
 		}),
 		storage: createJSONStorage(() => localStorage, { reviver })
 	})

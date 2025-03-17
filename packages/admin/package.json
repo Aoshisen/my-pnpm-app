@@ -18,6 +18,7 @@
     "@unocss/reset": "^66.0.0",
     "ahooks": "^3.8.4",
     "immutable": "^5.0.3",
+    "lodash-es": "^4.17.21",
     "noisejs": "^2.1.0",
     "sass": "^1.85.0",
     "vite-css-modules": "^1.8.4",
@@ -25,6 +26,7 @@
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.66.1",
+    "@types/lodash-es": "^4.17.12",
     "unocss": "^66.0.0",
     "vitest": "^3.0.8"
   }
