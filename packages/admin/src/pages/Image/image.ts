@@ -1,49 +1,19 @@
 type ColorBuffer = [r: number, g: number, b: number, a: number];
-// type PointBuffer = [
-// 	x: number,
-// 	y: number,
-// 	r: number,
-// 	g: number,
-// 	b: number,
-// 	a: number,
-// 	radius: number,
-// 	offsetX: number,
-// 	offsetY: number,
-// ]
+type PointBuffer = [
+	x: number,
+	y: number,
+	r: number,
+	g: number,
+	b: number,
+	a: number,
+	radius: number,
+	offsetX: number,
+	offsetY: number,
+]
 
-function getGrayScaledRadius(color: ColorBuffer, GAP: number) {
-	const grayScale = gray(color) / 255;
-	const radius = GAP / 2 * (1 - grayScale);
-	return radius;
-}
-
+//灰度算法 求出颜色值的加权平均数
 function gray([r, g, b]: ColorBuffer) {
 	return 0.299 * r + 0.587 * g + 0.114 * b
-}
-function* generatePoints(width: number, height: number, gap: number) {
-	for (let x = 0; x < width; x += gap) {
-		for (let y = 0; y < height; y += gap) {
-			yield { x, y };
-		}
-	}
-}
-
-function* generateBuffer(pointsBuffer: unknown[], size: number, max_range: number) {
-	let count = 0
-	const shouldYield = () => count <= max_range;
-	for (let index = 0; index < pointsBuffer.length; index += size) {
-		if (shouldYield()) {
-			yield slice(pointsBuffer, index, size);
-			count++
-		}
-	}
-}
-function slice(data: unknown[], begin: number, size: number) {
-	const slice = new Float32Array(size);
-	for (let i = 0; i < size; i++) {
-		slice[i] = data[begin + i] as number;
-	}
-	return slice
 }
 
 export class Image {
@@ -53,6 +23,7 @@ export class Image {
 	pointsBuffer: Float32Array;
 	private readonly POINT_DATA_SIZE = 9;
 	private readonly RANGE = 10;
+	private readonly COLOR_DATA_SIZE = 4
 	private pointsBufferLength: number = -1;
 	ctx: CanvasRenderingContext2D;
 
@@ -65,23 +36,62 @@ export class Image {
 		this.run();
 	}
 
-	getBufferSize() {
+	private getGrayScaledRadius(color: ColorBuffer) {
+		const grayScale = gray(color) / 255;
+		const radius = this.GAP / 2 * (1 - grayScale);
+		return radius;
+	}
+
+	private getBufferSize() {
 		const pointCount = Math.ceil(this.canvas.width / this.GAP) * Math.ceil(this.canvas.height / this.GAP);
 		return pointCount * this.POINT_DATA_SIZE;
 	}
 
-	initializePoints() {
+	private *generatePoints(width: number, height: number) {
+		for (let x = 0; x < width; x += this.GAP) {
+			for (let y = 0; y < height; y += this.GAP) {
+				yield { x, y };
+			}
+		}
+	}
+
+	private *generateBuffer(pointsBuffer: Float32Array, max_range: number) {
+		let count = 0
+		const shouldYield = () => count <= max_range;
+		for (let index = 0; index < pointsBuffer.length; index += this.POINT_DATA_SIZE) {
+			if (shouldYield()) {
+				yield [
+					pointsBuffer[index],
+					pointsBuffer[index + 1],
+					pointsBuffer[index + 2],
+					pointsBuffer[index + 3],
+					pointsBuffer[index + 4],
+					pointsBuffer[index + 5],
+					pointsBuffer[index + 6],
+					pointsBuffer[index + 7],
+					pointsBuffer[index + 8],
+				] as PointBuffer
+				count++
+			}
+		}
+	}
+
+	private initializePoints() {
 		const { width, height } = this.imageData;
 		let index = 0
-		for (const { x, y } of generatePoints(width, height, this.GAP)) {
-			const COLOR_DATA_SIZE = 4 //r,g,b,a
-			const dataIndex = (y * width + x) * COLOR_DATA_SIZE;
-			//@ts-expect-error  ColorBuffer
-			const color = slice(this.imageData.data, dataIndex, COLOR_DATA_SIZE) as ColorBuffer;
+		for (const { x, y } of this.generatePoints(width, height)) {
+			const dataIndex = (y * width + x) * this.COLOR_DATA_SIZE;
+			const color = [
+				this.imageData.data[dataIndex],
+				this.imageData.data[dataIndex + 1],
+				this.imageData.data[dataIndex + 2],
+				this.imageData.data[dataIndex + 3]
+			] as ColorBuffer;
+
 			if (this.isWhite(color)) {
 				continue;
 			}
-			const radius = getGrayScaledRadius(color, this.GAP);
+			const radius = this.getGrayScaledRadius(color);
 			const offsetX = Math.random() * this.RANGE;
 			const offsetY = Math.random() * this.RANGE;
 			const bufferIndex = index * this.POINT_DATA_SIZE;
@@ -91,23 +101,25 @@ export class Image {
 		this.pointsBufferLength = index;
 	}
 
-	getCanvas(image: HTMLImageElement) {
+	private getCanvas(image: HTMLImageElement) {
 		const canvas = document.createElement("canvas");
 		canvas.width = +image.width;
 		canvas.height = +image.height;
 		return canvas;
 	}
-	getImageData(canvas: HTMLCanvasElement, image: HTMLImageElement) {
+
+	private getImageData(canvas: HTMLCanvasElement, image: HTMLImageElement) {
 		this.ctx!.drawImage(image, 0, 0);
 		const data = this.ctx!.getImageData(0, 0, canvas.width, canvas.height);
 		this.ctx.clearRect(0, 0, canvas.width, canvas.height)
 		return data;
 	}
-	isWhite([r, g, b]: ColorBuffer) {
+
+	private isWhite([r, g, b]: ColorBuffer) {
 		return r === 255 && g === 255 && b === 255
 	}
 
-	drawPoint(point: Float32Array, step: number) {
+	private drawPoint(point: PointBuffer, step: number) {
 		const [x, y, r, g, b, a, radius, offsetX, offsetY] = point;
 		this.ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
 		this.ctx.beginPath();
@@ -116,13 +128,13 @@ export class Image {
 		this.ctx.closePath();
 	}
 
-	drawPoints(step = 0) {
+	private drawPoints(step = 0) {
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		//@ts-expect-error  pointerBuffer
-		for (const point of generateBuffer(this.pointsBuffer, this.POINT_DATA_SIZE, this.pointsBufferLength)) {
+		for (const point of this.generateBuffer(this.pointsBuffer, this.pointsBufferLength)) {
 			this.drawPoint(point, step);
 		}
 	}
+
 	run(step = 0) {
 		this.drawPoints(step);
 	}

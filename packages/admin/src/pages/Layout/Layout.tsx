@@ -1,8 +1,8 @@
 import { useRef } from "react";
-import { CommonWrapper, Header, Iframe, PreviewWrapper, Layout } from "../../components";
+import { CommonWrapper, Header, Iframe, PreviewWrapper, Layout as LayoutWrapper } from "../../components";
 import { useScale } from "../../hooks/useScale";
 
-function LayoutPage() {
+function Layout() {
 	const parentRef = useRef<HTMLDivElement>(null);
 	const childrenRef = useRef<HTMLDivElement>(null);
 
@@ -14,7 +14,7 @@ function LayoutPage() {
 	});
 
 	return (
-		<Layout
+		<LayoutWrapper
 			header={<Header />}
 			side={<>side</>}
 		>
@@ -23,8 +23,8 @@ function LayoutPage() {
 					<Iframe />
 				</CommonWrapper>
 			</PreviewWrapper>
-		</Layout>
+		</LayoutWrapper>
 	);
 }
 
-export default LayoutPage
+export default Layout
