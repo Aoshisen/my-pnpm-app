@@ -17,6 +17,7 @@
     "@types/d3": "^7.4.3",
     "@unocss/reset": "^66.0.0",
     "ahooks": "^3.8.4",
+    "d3": "^7.9.0",
     "immutable": "^5.0.3",
     "lodash-es": "^4.17.21",
     "noisejs": "^2.1.0",
