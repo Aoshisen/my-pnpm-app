@@ -13,7 +13,7 @@ const Image = () => {
 		const image = new ImageClass(target as HTMLImageElement);
 		setImageInstance(image);
 		//@ts-expect-error global
-		window.image=image;
+		window.image = image;
 		containerEl.current!.removeChild(target as HTMLImageElement)
 		containerEl.current!.append(image.canvas)
 	}
@@ -31,9 +31,9 @@ const Image = () => {
 	useEventListener("scroll", run)
 
 	return <>
-		<div className="h-3xl flex flex-items-center flex-justify-center">
+		<div className="h-4xl flex flex-items-center flex-justify-center">
 			<div className=" shadow-md shadow-gray-2" ref={containerEl}>
-				<img src={woman} alt="" onLoad={handleOnLoad}  crossOrigin="anonymous"/>
+				<img src={woman} alt="" onLoad={handleOnLoad} crossOrigin="anonymous" />
 			</div>
 		</div>
 		<div className="h-3xl"></div>

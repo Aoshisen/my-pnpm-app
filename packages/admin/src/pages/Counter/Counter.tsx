@@ -15,7 +15,7 @@ const Counter = () => {
 
 	return (
 		<div className="h-screen flex flex-items-center flex-justify-center">
-			<div className=" shadow-md shadow-gray-2 h-2xl w-2xl flex flex-items-center flex-justify-center">
+			<div className=" shadow-md shadow-gray-2 h-xl w-xl flex flex-items-center flex-justify-center">
 				<div>
 					<h1 className="text-center m-b-10">当前值: {count}</h1>
 					<div className="flex gap-2 flex-items-center">

@@ -9,7 +9,7 @@ function Home() {
 		navigate(path)
 	}
 	return (
-		<div className="h-3xl flex flex-items-center flex-justify-center">
+		<div className="h-screen flex flex-items-center flex-justify-center">
 			<div className=" shadow-md shadow-gray-2 w-xl h-xl flex flex-items-center flex-justify-center p-4" >
 				<div
 					style={{

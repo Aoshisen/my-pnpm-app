@@ -71,10 +71,19 @@ export class Plum extends Point {
 	private readonly MAX_DEPTH = 500;
 	private readonly MIN_DEPTH = 5;
 	public INIT_THETA = Math.PI / 2;
-	constructor(private el: HTMLCanvasElement, public x: number = 0, public y: number = 0) {
+	canvas: HTMLCanvasElement;
+	constructor(public width: number = 0, public height: number = 0, public x: number = 0, public y: number = 0) {
 		super(x, y);
-		this.ctx = this.el.getContext("2d")!;
+		this.canvas = this.createCanvas(width, height);
+		this.ctx = this.canvas.getContext("2d")!;
 		this.init();
+	}
+
+	private createCanvas(width: number, height: number) {
+		const canvas = document.createElement("canvas");
+		canvas.width = width;
+		canvas.height = height;
+		return canvas;
 	}
 	private getInitTheta() {
 		if (this.y === 0) {
@@ -82,12 +91,12 @@ export class Plum extends Point {
 			return Math.PI / 2
 		}
 
-		if (this.x === this.el.width) {
+		if (this.x === this.canvas.width) {
 			//右
 			return Math.PI
 
 		}
-		if (this.y === this.el.height) {
+		if (this.y === this.canvas.height) {
 			//下
 			return Math.PI * 3 / 2
 		}
@@ -128,6 +137,6 @@ export class Plum extends Point {
 	public destroy(): void {
 		this.frameQueue.length = 0;
 		this.depth = 0;
-		this.ctx.clearRect(0, 0, this.el.width, this.el.height);
+		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	}
 }

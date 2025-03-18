@@ -28,7 +28,7 @@ export class Image {
 	ctx: CanvasRenderingContext2D;
 
 	constructor(public img: HTMLImageElement) {
-		this.canvas = this.getCanvas(this.img);
+		this.canvas = this.createCanvas(this.img);
 		this.ctx = this.canvas.getContext("2d")!;
 		this.imageData = this.getImageData(this.canvas, this.img);
 		this.pointsBuffer = new Float32Array(this.getBufferSize());
@@ -101,7 +101,7 @@ export class Image {
 		this.pointsBufferLength = index;
 	}
 
-	private getCanvas(image: HTMLImageElement) {
+	private createCanvas(image: HTMLImageElement) {
 		const canvas = document.createElement("canvas");
 		canvas.width = +image.width;
 		canvas.height = +image.height;

@@ -1,21 +1,20 @@
-import { useMount } from "ahooks";
-import { useRef } from "react";
+import { useSize } from "ahooks";
+import { useEffect, useRef } from "react";
 import { Plum as PlumClass } from "./plum.ts"
 
 const Plum = () => {
-	const canvasRef = useRef<HTMLCanvasElement>(null);
-	useMount(() => {
-		const canvasEl = canvasRef.current!;
-		//@ts-expect-error global
-		// window.plum = new PlumClass(canvasEl!, canvasEl.width / 2, 0)
-		// window.plum1 = new PlumClass(canvasEl!, canvasEl.width, canvasEl.height / 2)
-		window.plum2 = new PlumClass(canvasEl!, canvasEl.width / 2, canvasEl.height)
-		// window.plum3 = new PlumClass(canvasEl!, 0, canvasEl.height / 2)
-
-	})
+	const containerRef = useRef<HTMLDivElement>(null);
+	const size = useSize(containerRef);
+	useEffect(() => {
+		if (size) {
+			const plum = new PlumClass(size.width!, size.height, size.width / 2, size.height)
+			//@ts-expect-error global 
+			window.plum = plum
+			containerRef.current?.append(plum.canvas)
+		}
+	}, [size])
 	return <div className="w-screen h-screen flex flex-items-center flex-justify-center">
-		<div className="w-2xl h-2xl  overflow-hidden shadow-xl shadow-gray-2">
-			<canvas ref={canvasRef} width={672} height={672} />
+		<div className="w-xl h-xl  overflow-hidden shadow-xl shadow-gray-2" ref={containerRef}>
 		</div>
 	</div>
 }
