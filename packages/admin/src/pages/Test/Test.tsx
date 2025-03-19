@@ -1,35 +1,35 @@
+//@see https://github.com/antfu/antfu.me/blob/7d6ca921dcedeca58f60ff518557f1edc55b1615/scripts/sponsors-circles.ts
 import { CSSProperties } from "react";
-import { randomInt, hierarchy, pack, HierarchyNode, descending, randomGeometri, randomUniform, randomLogNormal } from "d3";
-function createData() {
-	const randomFunc = randomLogNormal(0, 1)
-	const list = Array.from({ length: 100 }).fill(".").map(() => randomFunc()).map((i, d) => ({ id: d, value: i }))
-	const data = hierarchy(
-		{
-			name: "parent",
-			children: list
-		}
-	) as HierarchyNode<unknown>;
+import { hierarchy, pack, descending, randomLogNormal } from "d3";
 
-	return pack().size([800, 800]).padding(2)(data.sum(d => d.value)).sort((a, b) => descending(a.value, b.value));
+function createData() {
+	const randomFunc = randomLogNormal(0, 3)
+	const list = Array.from({ length: 1000 }).fill(".").map(() => randomFunc()).map((i, d) => ({ id: d, value: i }))
+	const root = hierarchy({ children: list }).sum(d => d.value).sort((a, b) => descending(a.value, b.value))
+	const p = pack().size([800, 800]).padding(2)
+	return p(root).descendants();
+
 }
+function getStyle(item) {
+	const styles = {
+		width: item.r * 2,
+		height: item.r * 2,
+		left: item.x - item.r,
+		top: item.y - item.r,
+	} as CSSProperties;
+	return styles
+}
+
 const Test = () => {
-	const data = createData();
+	const data = createData().slice(1);
 	const className = "pos-absolute border-black  border  rounded-full"
-	const circleClassName = " border-black  border  rounded-full";
 	return (
-		<div className="position-relative w-max m-x-auto m-t-10">
-			<div style={{ width: 800, height: 800 }} className={circleClassName}></div>
+		<div className="position-relative">
 			{
-				data.children?.map((item) => {
-					const styles = {
-						width: item.r * 2,
-						height: item.r * 2,
-						left: item.x - item.r,
-						top: item.y - item.r,
-					} as CSSProperties;
+				data?.map((item) => {
 					return <div key={item.data?.id}
 						className={className}
-						style={styles}
+						style={getStyle(item)}
 					></div>
 
 				})
