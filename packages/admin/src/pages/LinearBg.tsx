@@ -1,9 +1,11 @@
-import { LinearBg as LinearBgWrapper } from "../components/LinearBg";
+import { LinearBg as LinearBgWrapper, ArtText } from "../components";
 export const LinearBg = () => {
 	return (
 		<LinearBgWrapper>
 			<div className="h-screen w-screen flex flex-items-center flex-justify-center">
-				使用linear gradient 实现线布局
+				<ArtText>
+					linear-gradient
+				</ArtText>
 			</div>
 		</LinearBgWrapper>
 	)

@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { CommonWrapper, Header, Iframe, PreviewWrapper, Layout as LayoutWrapper } from "../components";
 import { useScale } from "../hooks/useScale";
 
-export const Layout=()=> {
+export const Layout = () => {
 	const parentRef = useRef<HTMLDivElement>(null);
 	const childrenRef = useRef<HTMLDivElement>(null);
 
@@ -15,12 +15,12 @@ export const Layout=()=> {
 
 	return (
 		<LayoutWrapper
-			header={<Header />}
-			side={<>side</>}
+			header={<></>}
+			side={<></>}
 		>
 			<PreviewWrapper ref={parentRef}>
 				<CommonWrapper ref={childrenRef} scale={scale}>
-					<Iframe />
+					{/* <Iframe /> */}
 				</CommonWrapper>
 			</PreviewWrapper>
 		</LayoutWrapper>
