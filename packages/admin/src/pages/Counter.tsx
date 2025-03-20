@@ -1,4 +1,4 @@
-import { Button } from "../components";
+import { BaseWrapper, Button } from "../components";
 import useCounterStore from "../store/counter";
 
 export const Counter = () => {
@@ -14,9 +14,9 @@ export const Counter = () => {
 	} = useCounterStore()
 
 	return (
-		<div className="h-screen flex flex-items-center flex-justify-center">
-			<div className=" shadow-md shadow-gray-2 h-xl w-xl flex flex-items-center flex-justify-center">
-				<div>
+		<BaseWrapper>
+			<div className="w-full h-full pos-relative">
+				<div className="pos-absolute top-1/2 left-1/2 translate-y--1/2 translate-x--1/2">
 					<h1 className="text-center m-b-10">当前值: {count}</h1>
 					<div className="flex gap-2 flex-items-center">
 						<Button onClick={() => increment(1)}>+1</Button>
@@ -27,6 +27,6 @@ export const Counter = () => {
 					</div>
 				</div>
 			</div>
-		</div>
+		</BaseWrapper>
 	)
 }
