@@ -1,6 +1,6 @@
 import { FC } from "react";
-import { Status } from "../../store/status";
-import useEnvironmentStore, { Environment } from "../../store/environment";
+import { Status } from "../store/status";
+import useEnvironmentStore, { Environment } from "../store/environment";
 import classNames from "classnames";
 
 type ButtonStatus = {
@@ -46,7 +46,7 @@ const Buttons: FC<HeaderProps> = () => {
 	return <>buttons</>
 }
 
-const Header: FC<HeaderProps> = (props) => {
+export const Header: FC<HeaderProps> = (props) => {
 	return <div className="grid grid-cols-[380px_1fr] h-full">
 		<div className="h-full flex flex-items-center px-5"><Left {...props} /></div>
 		<div className="h-full flex flex-items-center pos-relative">
@@ -57,4 +57,3 @@ const Header: FC<HeaderProps> = (props) => {
 		</div>
 	</div>
 }
-export default Header

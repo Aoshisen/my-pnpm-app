@@ -1,13 +1,13 @@
 import { FC, PropsWithChildren } from "react";
-import computer from "../../assets/computer-wrapper.png";
-import phone from "../../assets/phone-wrapper.png";
-import useEnvironmentStore, { Environment } from "../../store/environment"; // 如果环境在 store，也可以 props 传入！
+import computer from "../assets/computer-wrapper.png";
+import phone from "../assets/phone-wrapper.png";
+import useEnvironmentStore, { Environment } from "../store/environment"; // 如果环境在 store，也可以 props 传入！
 
 type CommonWrapperProps = {
 	ref?: React.RefObject<HTMLDivElement | null>;
 	scale?: number;
 };
-const CommonWrapper: FC<PropsWithChildren<CommonWrapperProps>> = ({ children, ref, scale = 1 }) => {
+export const CommonWrapper: FC<PropsWithChildren<CommonWrapperProps>> = ({ children, ref, scale = 1 }) => {
 	const { environment } = useEnvironmentStore();
 	const isPC = environment === Environment.PC;
 	const wrapperImage = isPC ? computer : phone;
@@ -31,4 +31,3 @@ const CommonWrapper: FC<PropsWithChildren<CommonWrapperProps>> = ({ children, re
 	);
 };
 
-export default CommonWrapper;

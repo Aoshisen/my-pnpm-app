@@ -1,7 +1,7 @@
-import { Button } from "../../components";
-import useCounterStore from "../../store/counter";
+import { Button } from "../components";
+import useCounterStore from "../store/counter";
 
-const Counter = () => {
+export const Counter = () => {
 	const {
 		count,
 		increment,
@@ -30,4 +30,3 @@ const Counter = () => {
 		</div>
 	)
 }
-export default Counter;

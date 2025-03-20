@@ -1,6 +1,7 @@
 import { useSize } from "ahooks";
 import { useEffect, useRef } from "react";
 import { Plum as PlumClass } from "./plum.ts"
+import { BaseWrapper } from "../../components/BaseWrapper.tsx";
 
 const Plum = () => {
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -8,14 +9,16 @@ const Plum = () => {
 	useEffect(() => {
 		if (size) {
 			const plum = new PlumClass(size.width!, size.height, size.width / 2, size.height)
-			//@ts-expect-error global 
+			//@ts-expect-error global
 			window.plum = plum
 			containerRef.current?.append(plum.canvas)
 		}
 	}, [size])
-	return <div className="w-screen h-screen flex flex-items-center flex-justify-center">
-		<div className="w-xl h-xl  overflow-hidden shadow-xl shadow-gray-2" ref={containerRef}>
-		</div>
-	</div>
+	return <BaseWrapper>
+		<div className="w-full h-full"
+			ref={containerRef}
+		/>
+	</BaseWrapper>
+
 }
 export default Plum

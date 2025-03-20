@@ -1,5 +1,5 @@
-import { LinearBg as LinearBgWrapper } from "../../components/LinearBg";
-const LinearBg = () => {
+import { LinearBg as LinearBgWrapper } from "../components/LinearBg";
+export const LinearBg = () => {
 	return (
 		<LinearBgWrapper>
 			<div className="h-screen w-screen flex flex-items-center flex-justify-center ">
@@ -8,5 +8,3 @@ const LinearBg = () => {
 		</LinearBgWrapper>
 	)
 }
-
-export default LinearBg;

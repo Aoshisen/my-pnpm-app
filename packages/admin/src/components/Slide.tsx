@@ -8,7 +8,7 @@ type SlideProps = {
 	height?: string;
 };
 
-const Slide: FC<SlideProps> = ({
+export const Slide: FC<SlideProps> = ({
 	value,
 	max = 100,
 	color = "#4CAF50",
@@ -81,4 +81,3 @@ const Slide: FC<SlideProps> = ({
 	);
 };
 
-export default Slide;

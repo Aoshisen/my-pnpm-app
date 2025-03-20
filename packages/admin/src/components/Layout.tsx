@@ -5,7 +5,7 @@ type LayoutProps<T = ReactNode> = {
 	side: T
 }
 
-const Layout: FC<PropsWithChildren<LayoutProps>> = ({ children, header, side }) => {
+export const Layout: FC<PropsWithChildren<LayoutProps>> = ({ children, header, side }) => {
 	return (
 		<div id="layout" className="p-4 bg-gray-1 h-screen">
 			<div className="grid grid-rows-[62px_1fr]  grid-cols-[380px_1fr] h-full shadow-lg rounded-b-md overflow-hidden">
@@ -16,5 +16,3 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({ children, header, side }) 
 		</div>
 	)
 };
-
-export default Layout

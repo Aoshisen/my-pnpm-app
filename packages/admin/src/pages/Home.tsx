@@ -1,21 +1,21 @@
 import { CSSProperties } from "react";
-import routes from "../../constant/routes";
-import { Button } from "../../components";
+import routes from "../constant/routes";
+import { BaseWrapper, Button } from "../components";
 import { useNavigate } from "react-router";
 
-function Home() {
+export const Home=()=> {
 	const navigate = useNavigate()
 	const handleLinkClick = (path: string) => {
 		navigate(path)
 	}
 	return (
-		<div className="h-screen flex flex-items-center flex-justify-center">
-			<div className=" shadow-md shadow-gray-2 w-xl h-xl flex flex-items-center flex-justify-center p-4" >
+		<BaseWrapper>
+			<div className=" w-full h-full p-8" >
 				<div
 					style={{
 						['--grid-min-col-size']: "150px"
 					} as CSSProperties}
-					className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,var(--grid-min-col-size,200px)),1fr))] gap-4 w-full"
+					className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,var(--grid-min-col-size,200px)),1fr))] gap-4 w-full "
 				>
 					{routes.map(route => {
 						return <Button key={route.path}
@@ -26,9 +26,7 @@ function Home() {
 					})}
 				</div>
 			</div>
-		</div >
+		</BaseWrapper>
 	);
 }
 
-
-export default Home
