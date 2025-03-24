@@ -1,59 +1,95 @@
-import { CSSProperties, FC } from "react";
-import { hierarchy, pack, descending, randomLogNormal, scaleLinear, interpolateNumber } from "d3";
+import { ReactEventHandler, useEffect, useMemo as useCallback, useRef, useState } from "react";
+import { useEventListener, useMouse, useSize } from "ahooks";
+import { BaseWrapper } from "../components";
 
-type CirclesProps = {
-	size: number
-}
-export const Test: FC<CirclesProps> = ({ size = 400 }) => {
-	const data = createData().slice(1);
-	const className = "pos-absolute  border rounded-full clear-both";
-
-	function createData() {
-		const randomFunc = randomLogNormal(0, 1);
-		const MIN = 3;
-		const MAX = 40;
-		const list = Array.from({ length: 100 }).fill(".").map(() => randomFunc()).map((i, d) => ({ id: d, value: i }));
-		const largest_one = Math.max(...list.map(item => item.value));
-		const compareValuesDescending = (a, b) => descending(a.value, b.value);
-		const singleValue = (d) => {
-			const i = interpolateNumber(MIN, MAX)
-			return i(d.value / largest_one);
+export const Test = () => {
+	const containerRef = useRef<HTMLDivElement>(null);
+	const size = useSize(containerRef);
+	const [lines, setLines] = useState<Lines>()
+	const mousePosition = useMouse()
+	useEffect(() => {
+		if (size) {
+			const lines = new Lines(size.width, size.height);
+			setLines(lines);
+			//@ts-expect-error global sky
+			window.lines = lines;
+			containerRef.current!.append(lines.canvas)
 		}
-		const root = hierarchy({ children: list }).sum(singleValue).sort(compareValuesDescending);
-		const p = pack().size([size, size]).padding(2);
-		return p(root).descendants();
+	}, [size])
+
+	useEffect(() => {
+		console.log(mousePosition,)
+		console.log(lines)
+	}, [mousePosition, lines])
+
+	return <BaseWrapper>
+		<div className="h-full w-full" ref={containerRef} />
+	</BaseWrapper>
+}
+
+class Canvas {
+	public canvas: HTMLCanvasElement;
+	public ctx: CanvasRenderingContext2D;
+	constructor(public width: number, public height: number) {
+		this.canvas = this.createCanvas(width, height)
+		this.ctx = this.canvas.getContext("2d")!;
 	}
-
-
-	function getStyle(item) {
-		const colorScale = scaleLinear()
-			.domain([0, Math.max(...data.map(item => item.value))])
-			.range(["white", "gray"]);
-		const styles = {
-			width: item.r * 2,
-			height: item.r * 2,
-			left: item.x - item.r,
-			top: item.y - item.r,
-			backgroundColor: colorScale(item.value) as unknown, // Set background color based on depth
-		} as CSSProperties;
-		return styles;
+	createCanvas(width: number, height: number) {
+		const canvas = document.createElement("canvas");
+		canvas.width = width;
+		canvas.height = height;
+		return canvas;
 	}
+}
 
+export class Lines extends Canvas {
+	GAP = 20;
+	lines: Line[];
+	constructor(public width: number, public height: number) {
+		super(width, height)
+		this.lines = this.generate_lines()
+	}
+	generate_lines() {
+		const lines = []
+		for (const line of this.generate_line()) {
+			lines.push(line)
+		}
+		return lines
 
-	return (
-		<div className="position-relative" style={{
-			width: size,
-			height: size
-		}}>
-			{
-				data?.map((item) => {
-					return <div
-						key={item.data?.id}
-						className={className}
-						style={getStyle(item)}
-					/>
-				})
+	}
+	*generate_line() {
+		for (let x = this.GAP; x < this.width; x += this.GAP) {
+			for (let y = this.GAP; y < this.width; y += this.GAP) {
+				const lineInstance = new Line(x, y, this.canvas.clientLeft + x, this.canvas.clientTop + y, this.GAP, this.ctx);
+				yield lineInstance;
 			}
-		</div>
-	);
+		}
+	}
+	draw_lines() {
+	}
+}
+
+type Point = {
+	x: number,
+	y: number
+}
+export class Line {
+	LINE_WIDTH = 1;
+	LINE_LENGTH = 15;
+	constructor(public x: number, public y: number,
+		public clientX: number, public clientY: number,
+		public GAP: number, public ctx: CanvasRenderingContext2D) {
+	}
+	update(theta: number) {
+		this.ctx.moveTo(this.x, this.y);
+		const X = Math.cos(theta) * this.LINE_LENGTH;
+		const Y = Math.sin(theta) * this.LINE_LENGTH;
+		this.ctx.lineTo(this.x + X, this.y + Y)
+		this.ctx.strokeStyle = "grey";
+		this.ctx.lineWidth = this.LINE_WIDTH;
+		this.ctx.stroke();
+	}
+	getThetaFormPoint(p: Point) {
+		return Math.atan2(p.y - this.y, p.x - this.x)
+	}
 }
