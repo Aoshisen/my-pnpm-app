@@ -1,10 +1,9 @@
-import { BaseWrapper } from "../components";
-
+import { BaseWrapper, Button } from "../components";
 export const Test = () => {
 
 	return (
 		<BaseWrapper>
-			this is test
+			<Button>重置</Button>
 		</BaseWrapper>
 	);
 };
