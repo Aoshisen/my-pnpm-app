@@ -11,10 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@my-pnpm-app/shared": "workspace:*",
     "@tanstack/react-query": "^5.66.9",
-    "@tanstack/react-query-devtools": "^5.66.9",
-    "@types/d3": "^7.4.3",
     "@unocss/reset": "^66.0.0",
     "ahooks": "^3.8.4",
     "d3": "^7.9.0",
@@ -28,6 +25,8 @@
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.66.1",
     "@types/lodash-es": "^4.17.12",
+    "@tanstack/react-query-devtools": "^5.66.9",
+    "@types/d3": "^7.4.3",
     "unocss": "^66.0.0",
     "vitest": "^3.0.8"
   }
